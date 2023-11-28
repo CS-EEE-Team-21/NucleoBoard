@@ -13,7 +13,7 @@ void receiveEvent(int howMany) {
   char subsystem = Wire.read();
   byte intByte1 = Wire.read();
   byte intByte2 = Wire.read();
-  float receivedData = (intByte1 << 8) | intByte2;
+  uint16_t receivedData = word(intByte1, intByte2);
 
   switch (subsystem){
     case 't':
@@ -35,7 +35,8 @@ void receiveEvent(int howMany) {
 void processReceivedTemperature(float temperature){
   temperature /= 100;
   Serial.print("Temperature: ");
-  Serial.println(temperature);
+  Serial.print(temperature);
+  Serial.println("°C");
 }
 
 void processReceivedpH(float pH){
@@ -44,16 +45,30 @@ void processReceivedpH(float pH){
   Serial.println(pH);
 }
 
-void processReceivedStirringRPM(float rpm){
+void processReceivedStirringRPM(int rpm){
   Serial.print("Motor RPM: ");
   Serial.println(rpm);
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////// NUCLEOBOARD TO ESP32 COMMUNICATION //////////////////////////////////
+
+float temperature = 31.42;
+float pH = 6.9696987;
+float rpm = 2023.465236;
 
 void requestEvent() {
-  Wire.write("hello ");
+  uint16_t temperatureData = (int)round(temperature * 100);
+  uint16_t pHData = (int)round(pH * 100);
+  uint16_t rpmData = (int)round(rpm);
+  Wire.write(highByte(temperatureData));
+  Wire.write(lowByte(temperatureData));
+  Wire.write(highByte(pHData));
+  Wire.write(lowByte(pHData));
+  Wire.write(highByte(rpmData));
+  Wire.write(lowByte(rpmData));
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////
 
 void setup() {
   Serial.begin(9600);
@@ -63,6 +78,8 @@ void setup() {
 }
 
 void loop() {
+  // do something about getting the readings from the sensors every so often
+  // also do something about how the sensors will be controlled from this file
   delay(100);
 }
 

@@ -1,5 +1,5 @@
-
 #include <Wire.h>
+#include "pH_sensor.h"
 
 const int ESP_TO_NUCLEO_PORT = 9;
 const int PH_PORT = 10;
@@ -36,21 +36,6 @@ void receiveEvent(int howMany) {
       processESPStirringRPM(receivedData);
       break;
 
-    // temperature from the sensor
-    case 'a':
-      processSensorTemperature(receivedData);
-      break;
-
-    // pH from the sensor
-    case 'b':
-      processSensorpH(receivedData);
-      break;
-
-    // rpm from the sensor
-    case 'c':
-      processSensorStirringRPM(receivedData);
-      break;
-
     default:
       Serial.print("Unexpected subsystem '");
       Serial.print(subsystem);
@@ -76,21 +61,6 @@ void processESPStirringRPM(int rpm){
   Serial.println(rpm);
 }
 
-void processSensorTemperature(float pH){
-  Serial.print("pH Data: ");
-  Serial.println(pH);
-}
-
-void processSensorpH(float pH){
-  Serial.print("pH Data: ");
-  Serial.println(pH);
-}
-
-void processSensorStirringRPM(float pH){
-  Serial.print("pH Data: ");
-  Serial.println(pH);
-}
-
 ///////////////////////// NUCLEOBOARD TO ESP32 COMMUNICATION //////////////////////////////////
 
 void requestEvent() {
@@ -107,21 +77,6 @@ void requestEvent() {
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 
-float getTemperature(){
-  ;
-}
-
-float getpH(){
-  Wire.requestFrom(PH_PORT, 3);
-  delay(50);
-}
-
-float getRPM(){
-  ;
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////
-
 void setup() {
   Serial.begin(9600);
   Wire.begin(ESP_TO_NUCLEO_PORT);
@@ -130,7 +85,8 @@ void setup() {
 }
 
 void loop() {
-  pH = getpH();
+  Serial.print("pH: ");
+  Serial.println(getPH());
   // do something about getting the readings from the sensors every so often
   // also do something about how the sensors will be controlled from this file
   delay(100);

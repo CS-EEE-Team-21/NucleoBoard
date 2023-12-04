@@ -2,29 +2,55 @@
 #include <Wire.h>
 
 const int ESP_TO_NUCLEO_PORT = 9;
-// const int phSensor = ?
+const int PH_PORT = 10;
 // const int temperatureSensor = ?
 // const int stirringSensor = ?
+
+float temperature;
+float pH;
+float rpm;
 
 ///////////////////////////// NUCLEOBOARD FROM ESP32 COMMUNICATION ////////////////////////////////
 
 void receiveEvent(int howMany) {
   // To send the sensor values, it is transmitted in chunks of bytes
+  Serial.println("Message received");
   char subsystem = Wire.read();
   byte intByte1 = Wire.read();
   byte intByte2 = Wire.read();
   uint16_t receivedData = word(intByte1, intByte2);
 
   switch (subsystem){
+    // temperature from the esp32
     case 't':
-      processReceivedTemperature(receivedData);
+      processESPTemperature(receivedData);
       break;
+
+    // pH from the esp32
     case 'p':
-      processReceivedpH(receivedData);
+      processESPpH(receivedData);
       break;
+
+    // rpm from the esp32
     case 's':
-      processReceivedStirringRPM(receivedData);
+      processESPStirringRPM(receivedData);
       break;
+
+    // temperature from the sensor
+    case 'a':
+      processSensorTemperature(receivedData);
+      break;
+
+    // pH from the sensor
+    case 'b':
+      processSensorpH(receivedData);
+      break;
+
+    // rpm from the sensor
+    case 'c':
+      processSensorStirringRPM(receivedData);
+      break;
+
     default:
       Serial.print("Unexpected subsystem '");
       Serial.print(subsystem);
@@ -32,29 +58,40 @@ void receiveEvent(int howMany) {
   }
 }
 
-void processReceivedTemperature(float temperature){
+void processESPTemperature(float temperature){
   temperature /= 100;
   Serial.print("Temperature: ");
   Serial.print(temperature);
   Serial.println("°C");
 }
 
-void processReceivedpH(float pH){
+void processESPpH(float pH){
   pH /= 100;
   Serial.print("pH: ");
   Serial.println(pH);
 }
 
-void processReceivedStirringRPM(int rpm){
+void processESPStirringRPM(int rpm){
   Serial.print("Motor RPM: ");
   Serial.println(rpm);
 }
 
-///////////////////////// NUCLEOBOARD TO ESP32 COMMUNICATION //////////////////////////////////
+void processSensorTemperature(float pH){
+  Serial.print("pH Data: ");
+  Serial.println(pH);
+}
 
-float temperature = 31.42;
-float pH = 6.9696987;
-float rpm = 2023.465236;
+void processSensorpH(float pH){
+  Serial.print("pH Data: ");
+  Serial.println(pH);
+}
+
+void processSensorStirringRPM(float pH){
+  Serial.print("pH Data: ");
+  Serial.println(pH);
+}
+
+///////////////////////// NUCLEOBOARD TO ESP32 COMMUNICATION //////////////////////////////////
 
 void requestEvent() {
   uint16_t temperatureData = (int)round(temperature * 100);
@@ -70,6 +107,21 @@ void requestEvent() {
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 
+float getTemperature(){
+  ;
+}
+
+float getpH(){
+  Wire.requestFrom(PH_PORT, 3);
+  delay(50);
+}
+
+float getRPM(){
+  ;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+
 void setup() {
   Serial.begin(9600);
   Wire.begin(ESP_TO_NUCLEO_PORT);
@@ -78,6 +130,7 @@ void setup() {
 }
 
 void loop() {
+  pH = getpH();
   // do something about getting the readings from the sensors every so often
   // also do something about how the sensors will be controlled from this file
   delay(100);

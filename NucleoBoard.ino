@@ -1,8 +1,7 @@
 #include <Wire.h>
-#include "pH_sensor.h"
+#include "pH.h"
 
 const int ESP_TO_NUCLEO_PORT = 9;
-const int PH_PORT = 10;
 // const int temperatureSensor = ?
 // const int stirringSensor = ?
 
@@ -85,10 +84,10 @@ void setup() {
 }
 
 void loop() {
+  pH = getPH();
   Serial.print("pH: ");
-  Serial.println(getPH());
-  // do something about getting the readings from the sensors every so often
-  // also do something about how the sensors will be controlled from this file
+  Serial.println(pH);
+  controlPH(pH);
   delay(100);
 }
 

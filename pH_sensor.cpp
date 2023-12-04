@@ -7,7 +7,7 @@
 */
 
 #include <Arduino.h>
-#include "pH_sensor.h"
+#include "pH.h"
 
 #define SensorPin A0
 #define offset 2.8795
@@ -29,8 +29,4 @@ float convertVoltageToPH(float voltage){
 float getPH(void){
   voltage = getVoltage();
   return convertVoltageToPH(voltage);
-}
-
-char* yes(void){
-  return "when you see it !!";
 }

@@ -84,10 +84,10 @@ void setup() {
 }
 
 void loop() {
-  pH = getPH();
-  Serial.print("pH: ");
-  Serial.println(pH);
-  controlPH(pH);
+  // pH = getPH();
+  // Serial.print("pH: ");
+  // Serial.println(pH);
+  // controlPH(pH);
   delay(100);
 }
 

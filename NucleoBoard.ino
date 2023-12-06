@@ -1,5 +1,6 @@
 #include <Wire.h>
 #include "pH.h"
+#include "heating.h"
 
 const int ESP_TO_NUCLEO_PORT = 9;
 
@@ -45,6 +46,7 @@ void processESPTemperature(float temperature){
   Serial.print("Temperature: ");
   Serial.print(temperature);
   Serial.println("°C");
+  changeTargetTemperature(temperature);
 }
 
 void processESPpH(float pH){
@@ -102,6 +104,7 @@ float temperatureReadings[numSamples];
 float currentTemperature;
 float temperatureSum = 0;
 
+// Get the sensor readings and then average them here in the main loop
 void loop() {
   unsigned long currentMillis = millis();
 
@@ -109,21 +112,29 @@ void loop() {
     lastReadingTime = currentMillis;
     
     currentpH = getPH();
-    // Serial.print(currentpH);
-    // Serial.print(", ");
-    // Serial.print("\n");
     pHSum = pHSum - pHReadings[sensorIndex] + currentpH;
     pHReadings[sensorIndex] = currentpH;
+
+    currentTemperature = getTemperature();
+    temperatureSum = temperatureSum - temperatureReadings[sensorIndex] + currentTemperature;
+    temperatureReadings[sensorIndex] = currentTemperature;
+
     numRecordedReadings++;
     sensorIndex = (sensorIndex + 1) % numSamples;
 
     if (numRecordedReadings >= 10){
         averagePH = pHSum / numSamples;
-        Serial.print("Average pH:" );
-        Serial.println(averagePH);
+        averageTemperature = temperatureSum / numSamples;
+        // Serial.print("Average pH:" );
+        // Serial.println(averagePH);
+        // Serial.print("Average temperature:" );
+        // Serial.println(averageTemperature);
     }
 
-    // controlPH(pH);
+    displayPH();
+    displayTemperature();
+    // controlPH(averagePH);
+    // controlTemperature(averageTemperature);
     delay(100);
   }
 }

@@ -5,4 +5,4 @@
 float getPH(void);
 void controlPH(float);
 void changeTargetPH(float);
-void displayPH(void);
+void displayTargetPH(void);

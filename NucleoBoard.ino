@@ -131,8 +131,9 @@ void loop() {
         // Serial.println(averageTemperature);
     }
 
-    displayPH();
-    displayTemperature();
+    // WARNING: PH USING DUMMY VALUES!!
+    displayTargetPH();
+    displayTargetTemperature();
     // controlPH(averagePH);
     // controlTemperature(averageTemperature);
     delay(100);

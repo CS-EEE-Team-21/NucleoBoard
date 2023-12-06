@@ -4,4 +4,4 @@
 float getTemperature(void);
 void controlTemperature(float);
 void changeTargetTemperature(float);
-void displayTemperature(void);
+void displayTargetTemperature(void);

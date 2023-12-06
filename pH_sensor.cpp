@@ -17,7 +17,7 @@ float convertVoltageToPH(float voltage){
 }
 
 float getPH(void){
-  // voltage = getVoltageFromPHSensor();
+  // float voltage = getVoltageFromPHSensor();
   // return convertVoltageToPH(voltage);
   int *countPtr = &count;
   *countPtr = ((*countPtr) + 1) % 25;

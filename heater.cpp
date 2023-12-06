@@ -18,7 +18,7 @@ void changeTargetTemperature(float temperature){
   *temperature_ptr = temperature;
 }
 
-void displayTemperature(void){
+void displayTargetTemperature(void){
   Serial.print("Target temperature: ");
   Serial.println(targetTemperature);
 }

@@ -20,7 +20,7 @@ void changeTargetPH(float pH){
     *pH_ptr = pH;
 }
 
-void displayPH(void){
+void displayTargetPH(void){
   Serial.print("Target pH: ");
   Serial.println(targetPH);
 }

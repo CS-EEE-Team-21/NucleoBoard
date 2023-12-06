@@ -1,4 +1,8 @@
+#define PH_SENSOR A0
+#define ACID_PUMP 13
+#define ALKALI_PUMP 12
+
 float getPH(void);
 void controlPH(float);
-void changePH(float);
-char* yes(void);
+void changeTargetPH(float);
+void displayPH(void);

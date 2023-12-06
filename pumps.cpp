@@ -1,8 +1,6 @@
 #include <Arduino.h>
 #include "pH.h"
 
-const int ACID_PUMP = 13;
-const int ALKALI_PUMP = 12;
 float targetPH = 5;
 
 void controlPH(float pH){
@@ -15,11 +13,12 @@ void controlPH(float pH){
     } 
 }
 
-void changePH(float pH){
+void changeTargetPH(float pH){
     float *pH_ptr = &targetPH;
     *pH_ptr = pH;
 }
 
-char* yes(void){
-  return "when you see it !!";
+void displayPH(void){
+  Serial.print("Target pH: ");
+  Serial.println(targetPH);
 }

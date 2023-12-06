@@ -2,12 +2,10 @@
 #include "pH.h"
 
 const int ESP_TO_NUCLEO_PORT = 9;
-// const int temperatureSensor = ?
-// const int stirringSensor = ?
 
-float temperature;
-float pH;
-float rpm;
+float averageTemperature;
+float averagePH;
+float averageRPM;
 
 ///////////////////////////// NUCLEOBOARD FROM ESP32 COMMUNICATION ////////////////////////////////
 
@@ -53,6 +51,7 @@ void processESPpH(float pH){
   pH /= 100;
   Serial.print("pH: ");
   Serial.println(pH);
+  changeTargetPH(pH);
 }
 
 void processESPStirringRPM(int rpm){
@@ -63,9 +62,9 @@ void processESPStirringRPM(int rpm){
 ///////////////////////// NUCLEOBOARD TO ESP32 COMMUNICATION //////////////////////////////////
 
 void requestEvent() {
-  uint16_t temperatureData = (int)round(temperature * 100);
-  uint16_t pHData = (int)round(pH * 100);
-  uint16_t rpmData = (int)round(rpm);
+  uint16_t temperatureData = (int)round(averageTemperature * 100);
+  uint16_t pHData = (int)round(averagePH * 100);
+  uint16_t rpmData = (int)round(averageRPM);
   Wire.write(highByte(temperatureData));
   Wire.write(lowByte(temperatureData));
   Wire.write(highByte(pHData));
@@ -81,13 +80,51 @@ void setup() {
   Wire.begin(ESP_TO_NUCLEO_PORT);
   Wire.onReceive(receiveEvent);
   Wire.onRequest(requestEvent);
+
+  // init pH subsystem
+  pinMode(PH_SENSOR, INPUT);
+  pinMode(ACID_PUMP, OUTPUT);
+  pinMode(ALKALI_PUMP, OUTPUT);
 }
 
+// Non blocking loop to get the averages of the sensor readings
+const int numSamples = 10;
+int sensorIndex = 0;
+int numRecordedReadings = 0;
+static unsigned long lastReadingTime = 0;
+int sampleTime = 10;
+
+float pHReadings[numSamples];
+float currentpH;
+float pHSum = 0;
+
+float temperatureReadings[numSamples];
+float currentTemperature;
+float temperatureSum = 0;
+
 void loop() {
-  // pH = getPH();
-  // Serial.print("pH: ");
-  // Serial.println(pH);
-  // controlPH(pH);
-  delay(100);
+  unsigned long currentMillis = millis();
+
+  if (currentMillis - lastReadingTime >= sampleTime) {
+    lastReadingTime = currentMillis;
+    
+    currentpH = getPH();
+    // Serial.print(currentpH);
+    // Serial.print(", ");
+    // Serial.print("\n");
+    pHSum = pHSum - pHReadings[sensorIndex] + currentpH;
+    pHReadings[sensorIndex] = currentpH;
+    numRecordedReadings++;
+    sensorIndex = (sensorIndex + 1) % numSamples;
+
+    if (numRecordedReadings >= 10){
+        averagePH = pHSum / numSamples;
+        Serial.print("Average pH:" );
+        Serial.println(averagePH);
+    }
+
+    // controlPH(pH);
+    delay(100);
+  }
 }
 

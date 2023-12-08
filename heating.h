@@ -1,5 +1,5 @@
 #define thermistorPin A1
-#define heaterGatePin D2
+#define heaterGatePin D3
 
 float getTemperature(void);
 void controlTemperature(float);

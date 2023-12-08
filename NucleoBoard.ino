@@ -59,6 +59,7 @@ void processESPpH(float pH){
 void processESPStirringRPM(int rpm){
   Serial.print("Motor RPM: ");
   Serial.println(rpm);
+  // changeStirringRPM(temperature);
 }
 
 ///////////////////////// NUCLEOBOARD TO ESP32 COMMUNICATION //////////////////////////////////
@@ -104,6 +105,10 @@ float temperatureReadings[numSamples];
 float currentTemperature;
 float temperatureSum = 0;
 
+float stirringReadings[numSamples];
+float currentRPM;
+float stirringSum = 0;
+
 // Get the sensor readings and then average them here in the main loop
 void loop() {
   unsigned long currentMillis = millis();
@@ -119,23 +124,32 @@ void loop() {
     temperatureSum = temperatureSum - temperatureReadings[sensorIndex] + currentTemperature;
     temperatureReadings[sensorIndex] = currentTemperature;
 
+    // Add in stirring code when ready
+    // currentStirringRPM = getStirringRPM();
+    // stirringSum = stirringSum - stirringReadings[sensorIndex] + currentStirringRPM;
+    // stirringReadings[sensorIndex] = currentStirringRPM;
+
     numRecordedReadings++;
     sensorIndex = (sensorIndex + 1) % numSamples;
 
     if (numRecordedReadings >= 10){
         averagePH = pHSum / numSamples;
         averageTemperature = temperatureSum / numSamples;
-        // Serial.print("Average pH:" );
+        averageRPM = stirringSum / numSamples;
+        // Serial.print("Average pH: ");
         // Serial.println(averagePH);
-        // Serial.print("Average temperature:" );
-        // Serial.println(averageTemperature);
+        Serial.print("Average temperature: ");
+        Serial.println(averageTemperature);
+        // Serial.print("Average rpm: ");
+        // Serial.println(averageRPM);
     }
 
-    // WARNING: PH USING DUMMY VALUES!!
-    displayTargetPH();
+    // displayTargetPH();
     displayTargetTemperature();
+    // displayTargetRPM();
     // controlPH(averagePH);
-    // controlTemperature(averageTemperature);
+    controlTemperature(averageTemperature);
+    // controlRPM(averageRPM);
     delay(100);
   }
 }

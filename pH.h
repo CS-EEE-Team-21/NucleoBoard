@@ -1,6 +1,6 @@
-#define PH_SENSOR A0
-#define ACID_PUMP 13
-#define ALKALI_PUMP 12
+#define PH_SENSOR A3
+#define ACID_PUMP D4
+#define ALKALI_PUMP D7
 
 float getPH(void);
 void controlPH(float);

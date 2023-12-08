@@ -1,10 +1,10 @@
 #include <Arduino.h>
 #include "heating.h"
 
-float targetTemperature = 30;
+float targetTemperature = 35;
 
 void controlTemperature(float temperature){
-  if (temperature < (targetTemperature-1.5)) {
+  if (temperature < (targetTemperature-2)) {
     Serial.println("heater on");
     digitalWrite(heaterGatePin, HIGH);
   } else {
